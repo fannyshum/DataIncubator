@@ -1,0 +1,44 @@
+import pandas as pd
+# Data from NYC OpenData: https://nycopendata.socrata.com/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9
+raw_data = pd.read_csv("311_Service_Requests_from_2010_to_Present.csv")
+# Count Frequency of Descriptor
+raw_data["Descriptor"].value_counts()
+# Graffiti shows up as 30th with frequency of 156693
+#Isolate to just Graffiti
+raw_data_graf = raw_data[raw_data.Descriptor == "Graffiti"]
+# Frequency of Agency requests
+raw_data_graf["Agency Name"].value_counts()
+# DSNY 155489 , DOT 982
+# Convert Date
+raw_graf["Created Date"] = pd.to_datetime(raw_graf["Created Date"])
+raw_graf_d = raw_graf.set_index(raw_graf["Created Date"])
+# Reduce data set 
+raw_graf = raw_data_graf[["Unique Key", "Created Date", "Closed Date", "Agency", "Complaint Type", "Location Type", "Incident Zip", "Police Precincts"]]
+#2018
+raw_graf_2018 = raw_graf_d.loc['2018-01-01':'2018-12-31'
+#Group by Police Precinct
+raw_test = raw_graf_2018.groupby("Police Precincts").count()
+#raw_test = raw_test.set_index(raw_test["Police Precincts"])
+raw_test_create = raw_test["Created Date"]
+raw_test_close = raw_test["Closed Date"]
+#Plot
+import numpy as np
+from matplotlib import pyplot as plt
+plt.plot(raw_test_create, label="Created")
+plt.plot(raw_test_close, label='Closed')
+plt.xlabel("Police Precincts")
+plt.ylabel("Total Service Requests")
+plt.title("Total 311 Graffiti Service Requests by Police Precinct in 2018")
+plt.show()
+#For 2017
+raw_graf_2017 = raw_graf_d.loc['2017-01-01':'2017-12-31']
+raw_test_2017 = raw_graf_2017.groupby("Police Precincts").count()
+raw_test_17_create = raw_test_2017["Created Date"]
+raw_test_17_close = raw_test_2017["Closed Date"]
+#Plot
+plt.plot(raw_test_17_create, label="Created")
+plt.plot(raw_test_17_close, label='Closed')
+plt.xlabel("Police Precincts")
+plt.ylabel("Total Service Requests")
+plt.title("Total 311 Graffiti Service Requests by Police Precinct in 2017")
+plt.show()
